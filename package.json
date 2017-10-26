@@ -1,0 +1,72 @@
+{
+  "name": "Tokyo_Shibuya_Vue_dev",
+  "version": "1.0.0",
+  "description": "Tokyo Shibuya Development Kit For Vue.js",
+  "main": "index.js",
+  "engines": {
+    "node": ">= 7.0.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "gulp",
+    "lint": "eslint -c .eslintrc.json app/src/assets/js/**/*",
+    "build": "gulp build",
+    "release": "gulp release",
+    "server": "browser-sync start -s './app/_release' --port 8000"
+  },
+  "keywords": [],
+  "author": "Bom Shibuya",
+  "license": "MIT",
+  "browserslist": [
+    "last 4 versions",
+    "not ie < 11"
+  ],
+  "devDependencies": {
+    "autoprefixer": "^7.1.6",
+    "babel": "^6.23.0",
+    "babel-core": "^6.23.1",
+    "babel-eslint": "^7.1.1",
+    "babel-loader": "^7.1.2",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-env": "^1.6.0",
+    "babel-preset-stage-0": "^6.22.0",
+    "css-loader": "^0.28.7",
+    "date-utils": "^1.2.21",
+    "eslint": "^4.5.0",
+    "eslint-plugin-import": "^2.7.0",
+    "eslint-plugin-prefer-object-spread": "^1.2.1",
+    "eslint-plugin-react": "^7.2.1",
+    "expose-loader": "^0.7.1",
+    "imagemin": "^5.3.1",
+    "imagemin-gifsicle": "^5.2.0",
+    "imagemin-jpegtran": "^5.0.2",
+    "imagemin-optipng": "^5.2.1",
+    "imagemin-svgo": "^5.2.2",
+    "minimist": "^1.2.0",
+    "modernizr-loader": "0.0.5",
+    "postcss": "^6.0.13",
+    "postcss-easy-import": "^3.0.0",
+    "postcss-loader": "^2.0.8",
+    "postcss-nested-props": "^1.1.7",
+    "precss": "^2.0.0",
+    "pug": "^2.0.0-rc.4",
+    "pug-loader": "^2.3.0",
+    "style-loader": "^0.19.0",
+    "sugarss": "^1.0.0",
+    "vue-loader": "^13.3.0",
+    "vue-template-compiler": "^2.5.2",
+    "webpack": "^3.5.5",
+    "webpack-dev-server": "^2.9.3"
+  },
+  "dependencies": {
+    "babel-polyfill": "^6.23.0",
+    "gsap": "^1.19.1",
+    "imagesloaded": "^4.1.1",
+    "jquery": "^2.2.4",
+    "modernizr": "^3.4.0",
+    "tokyo-shibuya-reset": "https://github.com/bom-shibuya/TOKYO_SHIBUYA_RESET.git",
+    "vue": "^2.5.2",
+    "webfontloader": "^1.6.27",
+    "whatwg-fetch": "^2.0.3"
+  }
+}
