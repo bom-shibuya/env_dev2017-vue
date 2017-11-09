@@ -15,6 +15,7 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 const Path = require('path');
 // const DirectoryManager = require('./DirectoryManager.js');
+const sugarss = require('sugarss');
 
 const DIR = {
   src: './app/src/',
@@ -24,7 +25,7 @@ const DIR = {
 }
 
 const commonConfig = {
-  entry: ['./app/src/assets/js/script.js', './app/src/assets/sass/style.css'],
+  entry: './app/src/assets/js/script.js',
   output: {
     path: Path.resolve(__dirname, 'app/dest'),
     publicPath: 'app/dest',
@@ -36,7 +37,7 @@ const commonConfig = {
     extensions: ['.js'],
     // moduleのディレクトリ指定
     modules: ['node_modules'],
-    // プラグインのpath解決å
+    // プラグインのpath解決
     alias: {
       'modernizr$': Path.resolve(__dirname, '.modernizrrc'),
       'ScrollToPlugin': Path.resolve(__dirname, 'node_modules/gsap/ScrollToPlugin.js'),
@@ -60,21 +61,42 @@ const commonConfig = {
         test: /\.vue$/,
         loader: 'vue-loader',
         options: {
-          postcss: {
-            config: {
-              path: Path.resolve('./')
+          loaders: {
+            sass: {
+              loader: 'vue-style-loader!css-loader!postcss-loader!sass-loader?indentedSyntax!sass-resources-loader',
+              options: {
+                resources: [
+                  Path.resolve(__dirname, 'app/src/assets/sass/libs/variables/**/*.sass'),
+                  Path.resolve(__dirname, 'app/src/assets/sass/libs/mixins/**/*.sass'),
+                  Path.resolve(__dirname, 'node_modules/tokyo-shibuya-reset/_reset.sass'),
+                  Path.resolve(__dirname, 'app/src/assets/sass/libs/presets/_preset.sass')
+                ]
+              }
             }
-          }
+          },
+          cssSourceMap: true,
+          extractCSS: true
         }
-      },
-      {
-        test: /\.css$/,
-        use: ExtractTextPlugin.extract({
-          loader: 'css-loader!postcss-loader'
-      })
       }
+      // },
+      // {
+      //   test: /\.sass$/,
+      //   use: ExtractTextPlugin.extract({
+      //     fallback: 'style-loader',
+      //     use: [
+      //       {
+      //         loader: 'css-loader',
+      //         options: {
+      //           importLoaders: 1
+      //         }
+      //       },
+      //       'postcss-loader',
+      //       'sass-loader'
+      //     ]
+      // })
     ]
   },
+  devtool: 'cheap-module-source-map',
   // プラグイン
   plugins: [
     // ファイルを細かく分析し、まとめられるところはできるだけまとめてコードを圧縮する
@@ -91,8 +113,9 @@ const commonConfig = {
     // hot reload
     new webpack.HotModuleReplacementPlugin(),
     new ExtractTextPlugin({
-      filename: 'bundle.css'
-  })
+      filename: 'bundle.css',
+      allChunks: true
+    })
   ],
   devServer: {
     contentBase: Path.resolve(__dirname, 'app/dest'),

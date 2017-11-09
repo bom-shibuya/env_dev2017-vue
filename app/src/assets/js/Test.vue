@@ -4,9 +4,9 @@
   p shut out
 </template>
 
-<style lang="postcss" scoped>
-.wrap
-  display: flex
-  &__text
-    font-size: 1.8rem
+<style lang="sass">
+  p
+    display: flex
+    color: $color-text
+    +letter-spacing
 </style>

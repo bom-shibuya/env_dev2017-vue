@@ -1,9 +1,9 @@
 module.exports = {
-  parser: 'sugarss',
+  // parser: 'sugarss',
   plugins: {
-    'precss': {},
-    'autoprefixer': {},
-    'postcss-nested-props': {},
-    'postcss-easy-import': {}
+    // 'precss': {},
+    'autoprefixer': {}
+    // 'postcss-nested-props': {},
+    // 'postcss-easy-import': {}
   }
 };
