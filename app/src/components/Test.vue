@@ -8,5 +8,5 @@
   p
     display: flex
     color: $color-text
-    +letter-spacing
+    // +letter-spacing
 </style>

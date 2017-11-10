@@ -11,9 +11,9 @@ import 'babel-polyfill';
 // import modernizr from 'modernizr';
 //
 // console.log(modernizr);
+import Test from './components/Test.vue';
 
-import Vue from 'vue/dist/vue.js';
-import Test from './Test.vue';
+const Vue = require('vue/dist/vue.js');
 
 new Vue({
   el: '#app',
