@@ -1,7 +1,7 @@
 <template lang="pug">
 .wrap
   p.wrap__text who are mother fucker??
-  p shut out
+  p shut afbadbfadbaf fdsbggfdag
   input(type="text")
 </template>
 

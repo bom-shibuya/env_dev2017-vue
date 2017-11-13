@@ -38,7 +38,7 @@ const DIR = {
 const commonConfig = {
   entry: `./${DIR_BASE.src}`,
   output: {
-    path: DIR_BASE.dest$,
+    path: DIR.dest$,
     publicPath: '',
     filename: 'bundle.js'
   },
@@ -50,10 +50,10 @@ const commonConfig = {
     modules: ['node_modules'],
     // プラグインのpath解決
     alias: {
-      'modernizr$': Path.resolve(__dirname, '.modernizrrc'),
-      'ScrollToPlugin': Path.resolve(__dirname, 'node_modules/gsap/ScrollToPlugin.js'),
-      'EasePack': Path.resolve(__dirname, 'node_modules/gsap/EasePack.js'),
-      'vue$': 'vue/dist/vue.esm.js'
+      modernizr$: Path.resolve(__dirname, '.modernizrrc'),
+      ScrollToPlugin: 'gsap/ScrollToPlugin.js',
+      EasePack: 'gsap/EasePack.js',
+      vue$: 'vue/dist/vue.esm.js'
     }
   },
   // モジュール
@@ -117,18 +117,15 @@ const commonConfig = {
     }),
     // html
     // new HtmlWebpackPlugin(),
-    // hot reload
-    // new webpack.HotModuleReplacementPlugin(),
     new ExtractTextPlugin({
       filename: 'bundle.css',
       allChunks: true
     })
   ],
   devServer: {
-    contentBase: Path.resolve(__dirname, 'app/dest'),
+    contentBase: DIR.dest$,
     historyApiFallback: true,
     compress: true,
-    hot: true,
     port: 3000
   }
 };
