@@ -10,4 +10,6 @@
     display: flex
     color: $color-text
     // +letter-spacing
+    +max-screen($sp)
+      font-size: 2.4rem
 </style>

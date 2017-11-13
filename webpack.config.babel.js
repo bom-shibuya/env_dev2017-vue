@@ -32,10 +32,102 @@ const DIR = {
 };
 
 /**
+ * ::::: NODE ENV ::::::::::::::::::::::::::::::
+ */
+
+const NODE_ENV = process.env.NODE_ENV;
+
+const ENV_DEVELOPMENT = NODE_ENV === 'development';
+const ENV_PRODUCTION = NODE_ENV === 'production';
+
+/**
+ * ::::: alias ::::::::::::::::::::::::::::::
+ */
+
+const alias = {
+  modernizr$: Path.resolve(__dirname, '.modernizrrc'),
+  ScrollToPlugin: 'gsap/ScrollToPlugin.js',
+  EasePack: 'gsap/EasePack.js',
+  vue$: 'vue/dist/vue.esm.js'
+};
+
+
+/**
+ * ::::: RULE ::::::::::::::::::::::::::::::
+ */
+
+const sassSetting = {
+  loader: 'vue-style-loader!css-loader!postcss-loader!sass-loader?indentedSyntax!sass-resources-loader',
+  options: {
+    resources: [
+      Path.resolve(
+        __dirname,
+        'app/src/styles/variables/**/*.sass'
+      ),
+      Path.resolve(
+        __dirname,
+        'app/src/styles/mixins/**/*.sass'
+      ),
+      Path.resolve(
+        __dirname,
+        'node_modules/tokyo-shibuya-reset/_reset.sass'
+      ),
+      Path.resolve(
+        __dirname,
+        'app/src/styles/presets/_preset.sass'
+      )
+    ]
+  }
+};
+
+const rules = [
+    {
+      test: /\.js$/,
+      exclude: /node_modules/,
+      loader: 'babel-loader'
+    },
+    {
+      test: /\.modernizrrc$/,
+      loader: 'modernizr-loader'
+    },
+    {
+      test: /\.vue$/,
+      loader: 'vue-loader',
+      options: {
+        loaders: {
+          sass: sassSetting
+        },
+        cssSourceMap: ENV_DEVELOPMENT,
+        extractCSS: ENV_PRODUCTION
+      }
+    }
+];
+
+
+/**
+ * ::::: devtool ::::::::::::::::::::::::::::::
+ */
+
+const devtool = 'cheap-module-source-map';
+
+
+/**
+ * ::::: devserver ::::::::::::::::::::::::::::::
+ */
+
+const devServer = {
+  contentBase: DIR.dest$,
+  historyApiFallback: true,
+  compress: true,
+  port: 3000
+};
+
+
+/**
  * ::::: COMMON CONFIG ::::::::::::::::::::::::::::::
  */
 
-const commonConfig = {
+const config = {
   entry: `./${DIR_BASE.src}`,
   output: {
     path: DIR.dest$,
@@ -49,101 +141,50 @@ const commonConfig = {
     // moduleのディレクトリ指定
     modules: ['node_modules'],
     // プラグインのpath解決
-    alias: {
-      modernizr$: Path.resolve(__dirname, '.modernizrrc'),
-      ScrollToPlugin: 'gsap/ScrollToPlugin.js',
-      EasePack: 'gsap/EasePack.js',
-      vue$: 'vue/dist/vue.esm.js'
-    }
+    alias: alias
   },
   // モジュール
   module: {
-    rules: [
-      {
-        test: /\.js$/,
-        exclude: /node_modules/,
-        loader: 'babel-loader'
-      },
-      {
-        test: /\.modernizrrc$/,
-        loader: 'modernizr-loader'
-      },
-      {
-        test: /\.vue$/,
-        loader: 'vue-loader',
-        options: {
-          loaders: {
-            sass: {
-              loader: 'vue-style-loader!css-loader!postcss-loader!sass-loader?indentedSyntax!sass-resources-loader',
-              options: {
-                resources: [
-                  Path.resolve(
-                    __dirname,
-                    'app/src/styles/variables/**/*.sass'
-                  ),
-                  Path.resolve(
-                    __dirname,
-                    'app/src/styles/mixins/**/*.sass'
-                  ),
-                  Path.resolve(
-                    __dirname,
-                    'node_modules/tokyo-shibuya-reset/_reset.sass'
-                  ),
-                  Path.resolve(
-                    __dirname,
-                    'app/src/styles/presets/_preset.sass'
-                  )
-                ]
-              }
-            }
-          },
-          cssSourceMap: true,
-          extractCSS: true
-        }
-      }
-    ]
-  },
-  devtool: 'cheap-module-source-map',
-  // プラグイン
-  plugins: [
-    // ファイルを細かく分析し、まとめられるところはできるだけまとめてコードを圧縮する
+    rules: rules
+  }
+};
+
+/**
+ * ::::: DEVELOPMENT ::::::::::::::::::::::::::::::
+ */
+
+if (ENV_DEVELOPMENT) {
+  config.devtool = devtool;
+  config.devServer = devServer;
+  config.plugins = [
+    new webpack.optimize.AggressiveMergingPlugin()
+  ];
+}
+
+
+/**
+ * ::::: DEVELOPMENT ::::::::::::::::::::::::::::::
+ */
+
+if (ENV_PRODUCTION) {
+  config.plugins = [
     new webpack.optimize.AggressiveMergingPlugin(),
-    // jQueryをグローバルに出す
-    new webpack.ProvidePlugin({
-      jQuery: 'jquery',
-      $: 'jquery',
-      jquery: 'jquery',
-      'window.jQuery': 'jquery'
+    new webpack.optimize.UglifyJsPlugin(),
+    new webpack.DefinePlugin({
+      'process.env': {
+        NODE_ENV: '"production"'
+      }
     }),
-    // html
-    // new HtmlWebpackPlugin(),
     new ExtractTextPlugin({
       filename: 'bundle.css',
       allChunks: true
     })
-  ],
-  devServer: {
-    contentBase: DIR.dest$,
-    historyApiFallback: true,
-    compress: true,
-    port: 3000
-  }
-};
-
-// for development Config
-// const devConfig = {
-//   ...commonConfig,
-//   devtool: 'cheap-module-source-map'
-// };
-
-// for production Config
-// const prodConfig = {...commonConfig,
-//   plugins: [...commonConfig.plugins, new webpack.optimize.UglifyJsPlugin()]
-// };
+  ];
+}
 
 
-// module.exports = {
-//   dev: devConfig,
-//   prod: prodConfig
-// };
-module.exports = commonConfig;
+/**
+ * ::::: EXPORTS ::::::::::::::::::::::::::::::
+ */
+
+module.exports = config;
