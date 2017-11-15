@@ -56,51 +56,59 @@ const alias = {
  * ::::: RULE ::::::::::::::::::::::::::::::
  */
 
-const sassSetting = {
-  loader: 'vue-style-loader!css-loader!postcss-loader!sass-loader?indentedSyntax!sass-resources-loader',
-  options: {
-    resources: [
-      Path.resolve(
-        __dirname,
-        'app/src/styles/variables/**/*.sass'
-      ),
-      Path.resolve(
-        __dirname,
-        'app/src/styles/mixins/**/*.sass'
-      ),
-      Path.resolve(
-        __dirname,
-        'node_modules/tokyo-shibuya-reset/_reset.sass'
-      ),
-      Path.resolve(
-        __dirname,
-        'app/src/styles/presets/_preset.sass'
-      )
-    ]
+const sassSetting = [
+  'css-loader',
+  'postcss-loader',
+  'sass-loader?indentedSyntax',
+  {
+    loader: 'sass-resources-loader',
+    options: {
+      resources: [
+        Path.resolve(
+          __dirname,
+          'app/src/styles/variables/**/*.sass'
+        ),
+        Path.resolve(
+          __dirname,
+          'app/src/styles/mixins/**/*.sass'
+        ),
+        Path.resolve(
+          __dirname,
+          'node_modules/tokyo-shibuya-reset/_reset.sass'
+        ),
+        Path.resolve(
+          __dirname,
+          'app/src/styles/presets/_preset.sass'
+        )
+      ]
+    }
   }
-};
+];
 
 const rules = [
-    {
-      test: /\.js$/,
-      exclude: /node_modules/,
-      loader: 'babel-loader'
-    },
-    {
-      test: /\.modernizrrc$/,
-      loader: 'modernizr-loader'
-    },
-    {
-      test: /\.vue$/,
-      loader: 'vue-loader',
-      options: {
-        loaders: {
-          sass: sassSetting
-        },
-        cssSourceMap: ENV_DEVELOPMENT,
-        extractCSS: ENV_PRODUCTION
-      }
+  {
+    test: /\.js$/,
+    exclude: /node_modules/,
+    loader: 'babel-loader'
+  },
+  {
+    test: /\.modernizrrc$/,
+    loader: 'modernizr-loader'
+  },
+  {
+    test: /\.vue$/,
+    loader: 'vue-loader',
+    options: {
+      loaders: {
+        sass: ExtractTextPlugin.extract({
+          use: sassSetting,
+          fallback: 'vue-style-loader'
+        })
+      },
+      cssSourceMap: ENV_DEVELOPMENT,
+      extractCSS: ENV_PRODUCTION
     }
+  }
 ];
 
 
@@ -175,10 +183,7 @@ if (ENV_PRODUCTION) {
         NODE_ENV: '"production"'
       }
     }),
-    new ExtractTextPlugin({
-      filename: 'bundle.css',
-      allChunks: true
-    })
+    new ExtractTextPlugin('bundle.css')
   ];
 }
 
