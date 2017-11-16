@@ -1,4 +1,3 @@
-'use strict';
 /*
     ██╗    ██╗███████╗██████╗ ██████╗  █████╗  ██████╗██╗  ██╗
     ██║    ██║██╔════╝██╔══██╗██╔══██╗██╔══██╗██╔════╝██║ ██╔╝
@@ -14,29 +13,20 @@
  */
 const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ImageminPlugin = require('imagemin-webpack-plugin').default;
+const CleanWebpackPlugin = require('clean-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const Path = require('path');
+const DIR = require('./DIR.js');
 
-/**
- * ::::: DIRECTORY PATH ::::::::::::::::::::::::::::::
- */
-const DIR_BASE = {
-  src: 'app/src/',
-  dest: 'app/dest/'
-};
-
-const DIR = {
-  src: `./${DIR_BASE.src}`,
-  src$: Path.resolve(__dirname, DIR_BASE.src),
-  dest: `./${DIR_BASE.dest}`,
-  dest$: Path.resolve(__dirname, DIR_BASE.dest)
-};
 
 /**
  * ::::: NODE ENV ::::::::::::::::::::::::::::::
  */
 
 const NODE_ENV = process.env.NODE_ENV;
-
 const ENV_DEVELOPMENT = NODE_ENV === 'development';
 const ENV_PRODUCTION = NODE_ENV === 'production';
 
@@ -48,7 +38,7 @@ const alias = {
   modernizr$: Path.resolve(__dirname, '.modernizrrc'),
   ScrollToPlugin: 'gsap/ScrollToPlugin.js',
   EasePack: 'gsap/EasePack.js',
-  vue$: 'vue/dist/vue.esm.js'
+  vue$: 'vue/dist/vue.common.js'
 };
 
 
@@ -56,34 +46,49 @@ const alias = {
  * ::::: RULE ::::::::::::::::::::::::::::::
  */
 
-const sassSetting = [
-  'css-loader',
-  'postcss-loader',
-  'sass-loader?indentedSyntax',
-  {
-    loader: 'sass-resources-loader',
-    options: {
-      resources: [
-        Path.resolve(
-          __dirname,
-          'app/src/styles/variables/**/*.sass'
-        ),
-        Path.resolve(
-          __dirname,
-          'app/src/styles/mixins/**/*.sass'
-        ),
-        Path.resolve(
-          __dirname,
-          'node_modules/tokyo-shibuya-reset/_reset.sass'
-        ),
-        Path.resolve(
-          __dirname,
-          'app/src/styles/presets/_preset.sass'
-        )
-      ]
-    }
-  }
+const sassResources = [
+  Path.resolve(
+    __dirname,
+    'app/src/styles/variables/**/*.sass'
+  ),
+  Path.resolve(
+    __dirname,
+    'app/src/styles/mixins/**/*.sass'
+  ),
+  Path.resolve(
+    __dirname,
+    'node_modules/tokyo-shibuya-reset/_reset.sass'
+  ),
+  Path.resolve(
+    __dirname,
+    'app/src/styles/presets/_preset.sass'
+  )
 ];
+
+const sassDevSetting = {
+  loader: 'vue-style-loader!css-loader!postcss-loader!sass-loader?indentedSyntax!sass-resources-loader',
+  options: {
+    resources: sassResources
+  }
+};
+
+const sassProdSetting = ExtractTextPlugin.extract({
+  use: [
+    {
+      loader: 'css-loader',
+      options: { minimize: true }
+    },
+    'postcss-loader',
+    'sass-loader?indentedSyntax',
+    {
+      loader: 'sass-resources-loader',
+      options: {
+        resources: sassResources
+      }
+    }
+  ],
+  fallback: 'vue-style-loader'
+});
 
 const rules = [
   {
@@ -100,13 +105,9 @@ const rules = [
     loader: 'vue-loader',
     options: {
       loaders: {
-        sass: ExtractTextPlugin.extract({
-          use: sassSetting,
-          fallback: 'vue-style-loader'
-        })
+        sass: ENV_DEVELOPMENT ? sassDevSetting : sassProdSetting
       },
-      cssSourceMap: ENV_DEVELOPMENT,
-      extractCSS: ENV_PRODUCTION
+      cssSourceMap: ENV_DEVELOPMENT
     }
   }
 ];
@@ -136,7 +137,7 @@ const devServer = {
  */
 
 const config = {
-  entry: `./${DIR_BASE.src}`,
+  entry: `./${DIR.src}`,
   output: {
     path: DIR.dest$,
     publicPath: '',
@@ -154,7 +155,28 @@ const config = {
   // モジュール
   module: {
     rules: rules
-  }
+  },
+  plugins: [
+    new CleanWebpackPlugin(`./${DIR.dest}`),
+    new HtmlWebpackPlugin({
+      title: 'CRAZY WORLD',
+      template: `./${DIR.src}index.html`
+    }),
+    new CopyWebpackPlugin([{
+      from: `./${DIR.src}images`,
+      to: 'images/'
+    }]),
+    new ImageminPlugin({
+      test: /\.(jpe?g|png|gif|svg)$/i,
+      gifsicle: {
+        optimizationLevel: 3,
+        interlaced: true
+      },
+      jpegtran: { progressive: true },
+      optipng: { optimizationLevel: 5 },
+      svgo: { removeViewBox: false }
+    })
+  ]
 };
 
 /**
@@ -164,9 +186,6 @@ const config = {
 if (ENV_DEVELOPMENT) {
   config.devtool = devtool;
   config.devServer = devServer;
-  config.plugins = [
-    new webpack.optimize.AggressiveMergingPlugin()
-  ];
 }
 
 
@@ -175,16 +194,17 @@ if (ENV_DEVELOPMENT) {
  */
 
 if (ENV_PRODUCTION) {
-  config.plugins = [
-    new webpack.optimize.AggressiveMergingPlugin(),
-    new webpack.optimize.UglifyJsPlugin(),
+  config.plugins.push(
     new webpack.DefinePlugin({
       'process.env': {
-        NODE_ENV: '"production"'
+        NODE_ENV: 'production'
       }
     }),
+    new UglifyJsPlugin({
+      warningsFilter: () => true
+    }),
     new ExtractTextPlugin('bundle.css')
-  ];
+  );
 }
 
 

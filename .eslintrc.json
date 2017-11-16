@@ -13,7 +13,9 @@
     "node": true
   },
   "parser": "babel-eslint",
+  "extends": ["vue"],
   "plugins": [
+    "vue",
     "react",
     "import",
     "prefer-object-spread"

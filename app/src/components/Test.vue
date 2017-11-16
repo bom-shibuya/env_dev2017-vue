@@ -3,6 +3,7 @@
   p.wrap__text who are mother fucker??
   p shut afbadbfadbaf fdsbggfdag
   input(type="text")
+  img(src="/images/hoge.jpg")
 </template>
 
 <style lang="sass">
