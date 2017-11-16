@@ -1,8 +1,12 @@
-# TOKYO SHIBUYA DEV
+# TOKYO SHIBUYA DEV FOR Vue.js
 ---
 
-TOKYO SHIBUYA DEVはホームページ手作り用キットです。<br>
-完全に個人目線で開発をしていますが、ありきたりな構成ではあるので、cloneしてくればだれでもすぐに開発が始められるでしょう。
+TOKYO SHIBUYA DEV FOR Vue.js はVue.jsを使ったホームページ手作り用キットです。<br>
+
+## ISSUE
+
+* 圧縮をかけてもvueがproduction modeにならない
+* テストタスクがない（テストを書く経験がないものでして、、、）
 
 ## 構成
 
@@ -18,23 +22,13 @@ TOKYO SHIBUYA DEVはホームページ手作り用キットです。<br>
 
 入っていれば`yarn`で、なければhomebrewなりでyarnを落としてくるか、`npm i`でも叩きましょう。おそらくそれでも入ってくると思います。
 
-### タスクランナーなどの構成
+### 構成イメージ
 
-* gulp
-  * pug -- htmlをどうこうするのに
-  * gulp-file-include -- pug使わないときのために一応置いてる。
-  * sass(scssでない)
-  * pleeease -- cssをいい感じに
-  * webpack3 -- jsをどうこうするのに
-  * imagemin -- 画像圧縮
-  * browser-sync -- ローカルホスト立ち上げ用
-
-* babel
-  * env
-  * stage-0
-  * transform-runtime
-
-大まかには以上で、詳しいことはpackage.jsonで
+webpack-dev-serverでHMR効かせて開発。  
+`app/src`内が開発環境、`app/dest`に吐き出させる。  
+cssはsassを使用して、variablesやmixins、presetなどは`app/src/styles`に入れて、`sass-resource-loader`で引っ張ってくる。  
+HTMLは`app/src/index.html`をテンプレートにしていて、タイトルはwebpackから渡す。
+ディレクトリ関係は`DIR.js`に書いてあるので、変更するなら確認してください。
 
 ### 元から入れてるプラグイン
 
@@ -47,6 +41,7 @@ TOKYO SHIBUYA DEVはホームページ手作り用キットです。<br>
 * gsap
 * imagesloaded
 * webfontloader
+* vue
 
 ## コマンド
 
@@ -66,53 +61,13 @@ eslintがエラー吐くときにnpm ERR!がいっぱい出ますが、ウザか
 
 リリースタスク
 
-    $ npm run release
+    $ npm run production
 
 リリースされたものの確認
 
     $ npm run server
 
-## 詳細
+### eslint
 
-### ディレクトリとファイル
+FREE CODE CAMPのものをパクってくる + vue-configで使ってます。
 
-ディレクトリは以下
-
-    app -- _release リリースフォルダ
-      |  ├ dest ステージング
-      |  ├ src 開発
-      |     ├ assets
-      |       ├ js
-      |       ├ img
-      |       ├ sass
-      |         ├ lib
-      |           ├ modules...
-      |
-    package.json ...
-
-ディレクトリはpackage.jsonとどう階層においてあるDirectoryManager.jsをgulpfileとwebpack configで使っています。<br>
-それぞれ、pathの書き方が違うので、そこを柔軟にするために関数化して、必要なら引数を食わせることにしました。  
-ディレクトリ構成を変更する場合はそこも確認してみてください。
-
-### webpackとbabelとeslint
-
-**webpack configについて**
-
-現在主流なのはwebpack configをcommmon/dev/prodの3枚とかに分けることだとおもうのですが、今回は対して違いがないので、全て1枚のファイルにまとめています。そしてオブジェクトにぶら下げてわたすことで、gulpで読み込むときにどの設定を読み込むかを分けています。
-現状2パターンあります。(dev/prod)
-
-**webpack3とbabel**
-
-babelで jsのトランスパイルを行っていますが、webpack3の絡みのせいでややこしいことになっています。<br>
-なぜなら、webpack3ではes6 modules(import/export)をfalseにしないとtree shakingがおこなわれないけれど、設定ファイルである、gulpfile.babel.jsとwebpack.config.babel.jsではimportとか、いろいろ使いたいみたいな気持ちがあったからです。<br>
-つまり、.babelrcに設定ファイル用をかいているが、実際のjsをコンパイルするとき用のbabelの設定はwebpack.config内で別途記述しているということです。<br>
-もしかしたらなんとかするかもしれません。
-
-**eslint**
-
-FREE CODE CAMPのものをパクってきて使ってます。
-
-### special thanks
-
-inagaki氏のsassファイルからmixins, variablesのutils, colorファイルの構成を使用させてもらってます。<br>
-thunk you inagakiiii!!
