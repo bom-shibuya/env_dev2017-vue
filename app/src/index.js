@@ -11,14 +11,14 @@ import 'babel-polyfill';
 // import modernizr from 'modernizr';
 //
 // console.log(modernizr);
-import Test from './components/Test.vue';
+import App from './components/App.vue';
 
 const Vue = require('vue/dist/vue.js');
 
 new Vue({
   el: '#app',
-  template: '<Test />',
+  template: '<App />',
   components: {
-    Test
+    App
   }
 });
