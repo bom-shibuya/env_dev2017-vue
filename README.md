@@ -5,7 +5,7 @@ TOKYO SHIBUYA DEV FOR Vue.js はVue.jsを使ったホームページ手作り用
 
 ## ISSUE
 
-* 圧縮をかけてもvueがproduction modeにならない
+* ~~圧縮をかけてもvueがproduction modeにならない~~(解決しました！！ [Issues#1](https://github.com/bom-shibuya/env_dev2017-vue/issues/1) ありがとうございます🙌🏻)
 * テストタスクがない（テストを書く経験がないものでして、、、）
 
 ## 構成
