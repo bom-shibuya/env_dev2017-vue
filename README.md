@@ -1,5 +1,8 @@
-# TOKYO SHIBUYA DEV FOR Vue.js
+# [deprecated] TOKYO SHIBUYA DEV FOR Vue.js
 ---
+
+移行しました。  
+[https://github.com/bom-shibuya/env_vue-ts](https://github.com/bom-shibuya/env_vue-ts)
 
 TOKYO SHIBUYA DEV FOR Vue.js はVue.jsを使ったホームページ手作り用キットです。<br>
 
